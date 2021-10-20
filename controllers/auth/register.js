@@ -1,5 +1,7 @@
 const { User } = require("../../models/User");
 const bcryptjs = require("bcryptjs");
+const welcomeEmail = require("../../utils/welcomeEmail");
+const randomstring = require("randomstring");
 
 const createNewUser = async (req, res, next) => {
   try {
@@ -17,17 +19,25 @@ const createNewUser = async (req, res, next) => {
       return res.status(400).json({ message: "email already exists." });
     }
     let hashedPassword = bcryptjs.hashSync(password, 12);
+    let secretToken = randomstring.generate();
     const newUser = new User({
       username: newUsername,
       email,
       gender,
       password: hashedPassword,
+      secretToken,
     });
     await newUser.save();
     if (!newUser)
       return res.status(500).json({ message: "An error has occurred." });
+
+    await welcomeEmail(
+      req,
+      newUser.username,
+      newUser.email,
+      newUser.secretToken
+    );
     res.status(201).json({ message: "User saved.", user: newUser });
-    res.json({ email, username, password });
   } catch ({ message }) {
     res.status(500).json({ message });
   }

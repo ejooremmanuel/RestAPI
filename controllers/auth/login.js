@@ -16,6 +16,9 @@ const loginUser = async (req, res, next) => {
     if (!findUser) {
       return res.status(404).json({ message: "Invalid login credential" });
     }
+    if (!findUser.confirmed) {
+      return res.status(401).json({ message: "Please verify your email." });
+    }
 
     let passwordMatch = await compare(password, findUser.password);
     if (!passwordMatch) {

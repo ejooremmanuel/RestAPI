@@ -8,6 +8,8 @@ const userSchema = new Schema(
     email: { type: String },
     gender: { type: String },
     avatar: { type: String },
+    secretToken: { type: String },
+    confirmed: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

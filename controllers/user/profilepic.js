@@ -12,6 +12,7 @@ const dpUpload = async (req, res) => {
   console.log(uploadedImage.secure_url);
   foundUser.avatar = uploadedImage.secure_url;
   await foundUser.save();
+  return res.status(201).json({ message: "profile image set." });
 };
 
 module.exports = dpUpload;
